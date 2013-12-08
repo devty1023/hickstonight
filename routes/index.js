@@ -106,9 +106,17 @@ exports.newUser = function(req, res){
                 password: req.body.pass
             }
 
-            // RUN VALIDATION
+            // RUN VALIDATIONS
+
+            // 1. Cannot be empty
             if ( post_obj.username == "" || post_obj.nickname == "" || post_obj.password == "" )
                 res.send( ' bad input ');
+
+            // 2. username and nickname must contain only characters and numbers
+            var regularExpression = /^[a-zA-Z0-9]+$/;
+            if ( regularExpression.test(post_obj.username) || regularExpression.test(post_obj.nickname) || regularExpression.test(post_obj.password) )
+                res.send('username, nickname, and password must consist of alphanumeric characters only (no spaces, tabs, !@#$%)');
+
             else {
                 // add to database
                 userController.addUser( post_obj, function ( err ) {
