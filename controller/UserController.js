@@ -1,7 +1,7 @@
 var mongoose = require('mongoose'),
     User = require('./UserScheme');
 
-mongoose.connect('mongodb://localhost/hickstonight');
+mongoose.connect(process.env.MONGOLAB_URI || 'mongodb://localhost/hickstonight');
 
 module.exports = function UserController() {
     return {
