@@ -114,7 +114,7 @@ exports.newUser = function(req, res){
 
             // 2. username and nickname must contain only characters and numbers
             var regularExpression = /^[a-zA-Z0-9]+$/;
-            if ( regularExpression.test(post_obj.username) || regularExpression.test(post_obj.nickname) || regularExpression.test(post_obj.password) )
+            if ( !regularExpression.test(post_obj.username) || !regularExpression.test(post_obj.nickname) || !regularExpression.test(post_obj.password) )
                 res.send('username, nickname, and password must consist of alphanumeric characters only (no spaces, tabs, !@#$%)');
 
             else {
