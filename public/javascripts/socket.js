@@ -4,6 +4,9 @@ socket.on('checkedIn', function (data) {
     // delete it
     $( "#inactive" ).children( "#"+data.nickname ).remove();
 
+    // bug fix: remove if already exist
+    $( "#active" ).children( "#"+data.nickname ).remove();
+
     // create a new span
     var new_div = '<div class="active_timer" id="' + data.nickname +'">';
     new_div += '<div class="panel-body", id="active">'
@@ -28,6 +31,11 @@ socket.on('checkedOut', function (data) {
     $( "#active" ).children( "#"+data.nickname ).remove();
 
     // create a new span
+
+    // BUG FIX: user might click checkout twice..
+    // simply remove the existing node..
+    $( "#inactive" ).children( "#"+data.nickname ).remove();
+
     var new_div = '<div class="inactive_timer" id="' + data.nickname +'">';
     new_div += '<div class="panel-body", id="inactive">'
     new_div += '<span class="glyphicon glyphicon-user"></span> ' + data.nickname;
