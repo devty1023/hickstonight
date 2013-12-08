@@ -1,0 +1,7 @@
+div.loginbox
+    form(name="newuser", action="/admin/newuser", method="post")
+        input(type="text", name="username", placeholder='Purdue email')
+        input(type="text", name="nickname", placeholder='Nickename')
+        input(type="password", name="pass")
+        input(type="password", name="admin", placeholder='Admin code')
+        input(type="submit", value="adduser")

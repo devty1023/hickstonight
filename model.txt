@@ -1,0 +1,30 @@
+UID
+----
+uid:ids => list of all active user ids
+
+< MAKE THIS HASH> XXXXX NO SINCE TIMESTAMPS NEEDS TO BE A LIST
+uid:<int>:username => devty
+uid:<int>:password => hashed pass
+uid:<int>:timestamps => (list of timestamp ids)
+uid:<int>:total => (in minutes)
+
+-----------
+uid:<int> username 
+
+username:<username>:uid
+
+
+timestamps: id
+            start_time
+            end_time
+            date
+
+POOL
+----
+MAKE THIS A HASH
+pool:users => list of uids     # MAKE THIS SYNCH WITH uid:ids (how?)
+pool:<int> status nickname active_since 
+
+global:nextTimeId
+global:nextUserId
+

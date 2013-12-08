@@ -1,0 +1,39 @@
+.login-form {
+    margin-left: 80px;
+    margin-right: 80px;
+}
+
+#btn-signin {
+    margin-top: 10px;
+}
+
+#status {
+    background-color: #FFFFFF;
+}
+
+.active_timer {
+    padding: 5px;
+}
+
+.inactive_timer {
+    padding: 5px;
+}
+
+.active_timer .time {
+    float: right;
+    margin: 0;
+}
+
+
+.inactive_timer .time {
+    float: right;
+    margin: 0;
+}
+
+.panel-body#active {
+    background-color: #BAD696;
+
+}
+.panel-body#inactive {
+    background-color: #FF9191;
+
