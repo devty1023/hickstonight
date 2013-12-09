@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var timeScheme = new mongoose.Schema( {
+var timeSchema = new mongoose.Schema( {
     created: Date,
     owner: String,
     startTime: Number,
@@ -8,3 +8,4 @@ var timeScheme = new mongoose.Schema( {
     elapsedTime: Number,
 }, {collection: 'timestamps'});
     
+module.exports = mongoose.model('Timestamp', timeSchema);

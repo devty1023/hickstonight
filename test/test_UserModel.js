@@ -1,5 +1,4 @@
 
-3
 var UserController = require( "../controller/UserController" );
 
 var userController = UserController();

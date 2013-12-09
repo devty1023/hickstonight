@@ -1,7 +1,8 @@
 var mongoose = require('mongoose'),
-    User = require('./UserScheme');
+    User = require('./UserScheme'),
+    TimeController = require('./TimeController')();
 
-mongoose.connect(process.env.MONGOLAB_URI || 'mongodb://localhost/hickstonight');
+mongoose.connect( process.env.MONGOLAB_URI || 'mongodb://localhost/hickstonight');
 
 module.exports = function UserController() {
     return {
@@ -40,7 +41,7 @@ module.exports = function UserController() {
         },
 
         getUserByUsername: function(username, callback) {
-            console.log( 'UserController.getUserById called' );
+            console.log( 'UserController.getUserByUsername called' );
 
             User.find( { username: username }, function(err, result) {
                  if( err || !result.length) {
@@ -78,7 +79,13 @@ module.exports = function UserController() {
         },
 
         checkIn: function( username, callback ) {
+            console.log("checkIn called");
             var that = this;
+
+            // BUG FIX: we might click checkIn multiple times. 
+            // we must ensure that checkIn is called only once
+
+            // fix: save it on cookie
 
             // get time
             var cur_time = Math.floor(new Date().getTime() / 1000);
@@ -93,20 +100,62 @@ module.exports = function UserController() {
             });
         },
 
-        checkOut: function( username, callback ) {
+        // checkout function to be called if user wants to checkout while session is < 30
+        checkOutForced: function(usr, callback ) {
+            console.log("checkOutForced called");
+
             var that = this;
-            User.update( { username: username}, { active: false, active_since: -1 }, function( err, result ) {
+            User.update( { username: usr.username}, { active: false, active_since: -1 }, function( err, result ) {
                 if( err ) return callback( new Error("update failed!") );
                 // update success
                 // we need to return the data obj..
-                that.getUserByUsername( username, function( err, result ) {
+                that.getUserByUsername( usr.username, function( err, result ) {
                     if (err) return callback( new Error("updated failed2") );
                     callback( null, result );
                 });
             });
+
+        },
+
+        checkOut: function( user, callback ) {
+            console.log("checkOut called");
+            var that = this;
+
+
+            // 1. create time stamp for this user
+            // TODO: create timestamp only if current session > 30 min
+
+            // 1a. create current stamp information
+            var cur_time = Math.floor(new Date().getTime() / 1000);
+            console.log( "cur time is " + cur_time );
+            var elapsedTime = cur_time - user.active_since;
+            var cur_stamp = { owner: user.username, startTime: user.active_since, endTime: cur_time, elapsedTime: elapsedTime };
+
+            // TODO: current session must be > 30 min
+            if ( elapsedTime < 1800 ) { // less than 30 minutes {
+                return callback( new Error("code:00") );
+            }
+
+            TimeController.createTimestamp( cur_stamp, function(err, result ) {
+                if( err ) console.log('create time stamp failed');
+
+                // update user info
+
+                // 2. update user info and return page
+                User.update( { username: user.username}, { active: false, active_since: -1,  $inc: { total: elapsedTime }, $push: { timestamps_all: result, timestamps_week: result} }, function( err, result ) {
+                    if( err ) return callback( new Error("update failed!") );
+                    // update success
+                    // we need to return the data obj too callback func
+                    that.getUserByUsername( user.username, function( err, result ) {
+                        if (err) return callback( new Error("updated failed2") );
+                        callback( null, result );
+                    });
+                });
+    
+            });
+
+            
         }
-
-
 
     };
 };

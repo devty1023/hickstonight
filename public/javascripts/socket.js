@@ -11,7 +11,7 @@ socket.on('checkedIn', function (data) {
     var new_div = '<div class="active_timer" id="' + data.nickname +'">';
     new_div += '<div class="panel-body", id="active">'
     new_div += '<span class="glyphicon glyphicon-user"></span> ' + data.nickname;
-    new_div += '<div class="active_timer time" id="' + data.nickname + '">' + data.active_since;
+    new_div += '<div class="active_timer time" id="' + data.nickname + '">' + "0";
         new_div += '</div></div></div>';
 
     // insert to new 

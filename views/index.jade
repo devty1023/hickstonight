@@ -73,3 +73,23 @@ div(class="modal fade", id="loginModal", tabindex="-1", role="dialog", aria-labe
             input(class="form-control", type="text", name="user", placeholder="Email")
             input(class="form-control", type="password", name="pass", placeholder="Password")
             button(type="submit", id="btn-signin", class="btn btn-primary btn-block") sign in
+
+//warning modal
+if forced
+  script(type='text/javascript').
+    $(document).ready(function(){
+      $('#forcedCheckoutModal').modal('show');
+    })
+  div(class="modal fade in", id="forcedCheckoutModal", tabindex="-1", role="dialog", aria-labelledby="myModalLabel", aria-hidden="true", data-show="true")
+    div.modal-dialog
+      div.modal-content
+        div.modal-header
+          button(type="button", class="close", data-dismiss="modal", aria-hidden="true") &times
+          h4(class="modal-title", id="myModalLabel") Warning!
+        div.modal-body
+          div(class="alert alert-danger")  You must stay <strong>AT LEAST 30 minutes</strong> to clock in a session. <br/> If you checkout now, your session will not be saved :(
+          form(name="checkout", action="/", method="post")
+            input(type="hidden", name="checkout", value="checkout")
+            input(type="hidden", name="forcedCheckout", value="forcedCheckout")
+            input(type="hidden", name="user", value=user.username)
+            input(class="btn btn-primary btn-block", type="submit", value="checkout")

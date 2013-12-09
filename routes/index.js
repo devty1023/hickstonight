@@ -11,13 +11,14 @@ exports.index = function( io ) {
     console.log('index called');
     if ( req.method == 'GET' ) {
         userController.getUsers( function(err, results) {
-            console.log(results)
+            //console.log(results)
             if ( req.session.user ) {
                 var current_user = {
                     active: req.session.active,
                     username: req.session.user
                 };
-                res.render('index', { title: req.session.nickname, users: results, user: current_user } )
+                res.render('index', { title: req.session.nickname, users: results, user: current_user, forced: req.session.forcedCheckout } )
+                req.session.forcedCheckout = null; // update
             }
             else {
                 res.render('index', { title: 'No user', users: results, login: true } )
@@ -26,38 +27,107 @@ exports.index = function( io ) {
     }
 
     else { // post request 
-        console.log(req.body);
+        //console.log(req.body);
 
         // 1. user is checking in
-        if ( req.body.checkin ) return userController.checkIn( req.body.user, function(err, result) {
-            if( err ) return res.send("something went wrong..");
+        if ( req.body.checkin ) {
+            if( !req.session.checkin ) {
+                req.session.checkout = false;
+                req.session.checkin = true;
+                return userController.checkIn( req.body.user, function(err, result) {
+                    if( err ) {
 
-            // update activity
-            req.session.active = result[0].active;
-            // redirect
-            io.sockets.emit( 'checkedIn', { nickname: result[0].nickname, active_since: result[0].active_since } );
-            res.redirect('/');
+                        req.session.checkout = true;
+                        req.session.checkin = false;
+                        return res.send("something went wrong.. " + err);
+                    }
 
-            // send message to all sockets
-            /*
-            if( req.app.get('socket').sockets != null )
-                req.app.get('socket').sockets.emit( "checkedIn",  { nickename: result[0].nickname, active_since: result[0].active_since } );
-            else
-                console.log(req.app.get('socket'));
-                */
+                    // update activity
+                    req.session.active = result[0].active;
+                    // redirect
+                    io.sockets.emit( 'checkedIn', { nickname: result[0].nickname, active_since: result[0].active_since } );
+                    return res.redirect('/');
 
-        });
+                });
+            }
+            else {
+                console.log( 'checkin already processed..' );
+                return res.redirect('/');
+            }
+        }
 
         // 2. user is checking out
-        if ( req.body.checkout ) return userController.checkOut( req.body.user, function(err, result) {
-            if( err ) return res.send("something went wrong..");
+        if ( req.body.checkout ) {
+            if( !req.session.checkout ) {
+                req.session.checkin = false; // toggle
+                req.session.checkout = true; // toggle
 
-            // update activity
-            req.session.active = result[0].active;
-            // redirect
-            io.sockets.emit( 'checkedOut', { nickname: result[0].nickname } );
-            res.redirect('/');
-        });
+                // UPDATE:
+                // 1. To implement timestamp, I need not only username, but also the active_since info
+                // 2. This information can only be safetly retrieved from the database only (no cookie gaurantee..)
+
+                return userController.getUserByUsername( req.body.user, function( err, result ) {
+                    // create user object
+                    if( err ) { 
+                        // we couldn't check out..
+                        req.session.checkout=false;
+                        req.session.checkin=true;
+                        return res.send("getUserByUsername failed... " + err);
+                    }
+
+                    var user = { username: result[0].username, active_since: result[0].active_since }
+                    console.log( "retrived user info: " + user );
+
+                    // this body is used when we are forcing a checkout (< 30 min )
+                    if ( req.body.forcedCheckout ) {
+                        console.log("we will now force checkout..");
+                        return userController.checkOutForced( user, function( err, result ) {
+                            if( err ) {
+                                // we couldn't check out..
+                                req.session.checkout=false;
+                                req.session.checkin=true;
+                                return res.send("something went wrong... " + err);
+                            }
+
+                            // update activity
+                            req.session.active = result[0].active;
+
+                            // send socket messages
+                            io.sockets.emit( 'checkedOut', { nickname: result[0].nickname } );
+
+                            return res.redirect('/');
+                        });
+
+                    }
+
+                    return userController.checkOut( user , function(err, result) {
+                        if( err ) {
+                            // we couldn't check out..
+                            req.session.checkout=false;
+                            req.session.checkin=true;
+                            if( err.message == "code:00" ) { // session was < 30 min 
+                                console.log("forced checkout initialized");
+                                req.session.forcedCheckout = true;
+                                return res.redirect("/");
+                            }
+                            return res.send("something went wrong... " + err);
+                        }
+                        // update activity
+                        req.session.active = result[0].active;
+                        console.log("!!!!!!!!!!! " + req.session.active);
+                        // redirect
+                        io.sockets.emit( 'checkedOut', { nickname: result[0].nickname } );
+                        return res.redirect('/');
+                    });
+
+                });
+
+            }
+            else {
+                console.log( 'checkout already processed..' );
+                return res.redirect('/');
+            }
+        }
 
 
         // 3. user is signing out
@@ -77,7 +147,7 @@ exports.index = function( io ) {
             }
             else {
                 console.log("in routes..");
-                console.log(result);
+                //console.log(result);
                 req.session.user = result[0].username;
                 req.session.nickname = result[0].nickname;
                 req.session.active = result[0].active;

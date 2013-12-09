@@ -14,10 +14,5 @@ var userSchema = new mongoose.Schema( {
 }, {collection: 'users'});
 
 
-// methods
-userSchema.methods.addUser = function( callback ) {
-    return 
-}
-
 
 module.exports = mongoose.model('User', userSchema);
