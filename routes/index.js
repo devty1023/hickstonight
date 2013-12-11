@@ -10,6 +10,7 @@ exports.index = function( io ) {
   return function(req, res){
     console.log('index called');
     console.log('today is' + (new Date().getDay()));
+    console.log('update?' + process.env.UPDATE);
 
     if ( req.method == 'GET' ) {
         if ( ( (new Date()).getDay() == 2 ) && process.env.UPDATE ) {
