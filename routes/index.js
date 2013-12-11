@@ -13,11 +13,11 @@ exports.index = function( io ) {
     console.log('update?' + process.env.UPDATE);
 
     if ( req.method == 'GET' ) {
-        if ( ( (new Date()).getDay() == 2 ) && process.env.UPDATE ) {
+        if ( ( (new Date()).getDay() == 3 ) && process.env.UPDATE ) {
             console.log("update database initialized");
             process.env.UPDATE = false;
         }
-        else if ( ( (new Date()).getDay() != 2 ) ) {
+        else if ( ( (new Date()).getDay() != 3 ) ) {
             process.env.UPDATE = true;
         }
 
