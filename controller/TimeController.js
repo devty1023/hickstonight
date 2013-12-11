@@ -36,7 +36,17 @@ module.exports = function TimeController() {
             });
 
         },
+
+        getTimestampsByUsername: function( username, callback ) {
+            console.log( 'getTimestampsByUsername called with ' + username );
+            Timestamp.find({owner: username}).sort( { endTime: -1} ).exec( function( err, result) {
+                if ( err ) callback( new Error("getTimestampsByIds failed") );
+                else
+                    callback(null, result);
+            });
+
+        }
     };
-}
+};
 
  

@@ -32,8 +32,115 @@
 
 .panel-body#active {
     background-color: #BAD696;
-
 }
+
+.panel-body#active:hover {
+    text-decoration: none;
+    color: white;
+}
+
+.panel-body#active {
+    color: black;
+}
+
 .panel-body#inactive {
     background-color: #FF9191;
+}
+
+.panel-body#inactive:hover {
+    text-decoration: none;
+    color: white;
+}
+
+.panel-body#inactive {
+    color: black;
+}
+
+.total {
+    float: right;
+    margin: 0;
+}
+
+.panel-body#one {
+    background-color: #FFCC33;
+}
+
+.panel-body#one:hover {
+    text-decoration: none;
+    color: white;
+}
+
+.panel-body#one {
+    color: black;
+}
+
+.panel-body#rest {
+    background-color: #F3EFE0;
+}
+
+.panel-body#rest:hover {
+    text-decoration: none;
+    color: white;
+}
+
+.panel-body#rest {
+    color: black;
+}
+
+.rank {
+    padding: 5px;
+}
+
+.user_title {
+    padding: 5px;
+    background-color: #107FC9;
+    font-weight: bold;
+    font-size: large;
+    color: #fff;
+}
+
+.user_info {
+    padding: 5px;
+    background-color: #F3EFE0;
+}
+
+.timestamps {
+    background-color: #F3EFE0;
+}
+
+.timestamp {
+    padding: 5px;
+}
+
+
+.rank {
+    padding: 5px;
+}
+
+.row-fluid#image {
+    background-color: #F3EFE0;
+}
+
+.user_statistic {
+    background-color: #F3EFE0;
+}
+
+.panel-body#timestamp {
+    background-color: #F1F0FF;
+}
+
+.timestamp .day {
+    font-weight: bold;
+}
+
+.timestamp .time {
+    font-weight: bold;
+    float: right;
+
+}
+
+.panel-body .usertime {
+    float: center;
+    background-color: #F1F0FF;
+}
 

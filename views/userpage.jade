@@ -1,0 +1,39 @@
+div(class="col-md-4 col-md-offset-4")
+  h1 Hicks Tonight
+  hr
+
+  div.user_summary
+    div.user_title 
+      span(class="glyphicon glyphicon-user") 
+      = " " + user.nickname
+
+  div.user_info 
+        button(class="btn btn-info btn-block", disabled="disabled")
+          strong Total Time Spent 
+          br
+          = user.total_all
+        button(class="btn btn-info btn-block", disabled="disabled")
+          strong This week 
+          br
+          = user.total_week
+
+div(class="col-md-4 col-md-offset-4")
+  div#timestamps
+    for timestamp in timestamps
+      div(class="timestamp")
+        div(class="panel-body", id="timestamp")
+          div(class="timestamp day")
+            = timestamp.created.toDateString()
+
+          div(class="timestamp inout")
+
+            = ( new Date(timestamp.startTime*1000).toLocaleTimeString())
+            = " - " + ( new Date(timestamp.endTime*1000).toLocaleTimeString())
+
+          div(class="timestamp time")
+            if( (timestamp.elapsedTime / 3600) > 1 )
+              = Math.floor(timestamp.elasedTime/3600) + " hr"
+
+            = Math.floor(timestamp.elapsedTime / 60) + " min"
+
+

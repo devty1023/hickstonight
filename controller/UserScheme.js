@@ -7,9 +7,9 @@ var userSchema = new mongoose.Schema( {
     password:   String,
     active:     Boolean,
     active_since: Number,
-    total:      Number,
-    timestamps_week: [ { id: String } ],
-    timestamps_all: [ { id: String } ],
+    total_week:   Number,
+    total_all:    Number,
+    timestamps: [String],
     created: Date
 }, {collection: 'users'});
 

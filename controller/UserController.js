@@ -20,9 +20,9 @@ module.exports = function UserController() {
                 password: usr.password,
                 active:   false,
                 active_since: -1,
-                total: 0,
-                timestamps_week: [],
-                timestamps_all: [],
+                total_week: 0,
+                total_all: 0,
+                timestamps: [],
                 created: new Date()
             });
 
@@ -30,8 +30,24 @@ module.exports = function UserController() {
         },
 
         getUsers: function( callback ){
+            // same as getUsersByWeek
             console.log( 'UserController.getUsers called' );
             User.find(function(err, result) {
+                //console.log(result);
+            });
+            User.find().sort( {total_week: -1 }).exec( function(err, result) {
+                 if( err || !result) {
+                     this.errGetUsers();
+                 }
+                 else
+                     callback( null, result );
+            });
+        },
+
+        getUsersByAll: function( callback ){
+            // THIS ONE SORTS BY TOTAL_ALL
+            console.log( 'UserController.getUserAll called' );
+            User.find().sort( {total_all: -1 }).exec( function(err, result) {
                  if( err || !result) {
                      this.errGetUsers();
                  }
@@ -49,6 +65,7 @@ module.exports = function UserController() {
                  }
                  else {
                      //console.log(result);
+                     console.log(result[0].timestamps.length);
                      callback( null, result );
                  }
             });
@@ -132,7 +149,8 @@ module.exports = function UserController() {
             var cur_stamp = { owner: user.username, startTime: user.active_since, endTime: cur_time, elapsedTime: elapsedTime };
 
             // TODO: current session must be > 30 min
-            if ( elapsedTime < 1800 ) { // less than 30 minutes {
+            // DEVELOPMENT: 1min 
+            if ( elapsedTime < 30 ) { // less than 30 minutes 
                 return callback( new Error("code:00") );
             }
 
@@ -142,7 +160,7 @@ module.exports = function UserController() {
                 // update user info
 
                 // 2. update user info and return page
-                User.update( { username: user.username}, { active: false, active_since: -1,  $inc: { total: elapsedTime }, $push: { timestamps_all: result, timestamps_week: result} }, function( err, result ) {
+                User.update( { username: user.username}, { active: false, active_since: -1,  $inc: { total_week: elapsedTime, total_all: elapsedTime }, $push: { timestamps: result} }, function( err, result ) {
                     if( err ) return callback( new Error("update failed!") );
                     // update success
                     // we need to return the data obj too callback func
@@ -154,9 +172,34 @@ module.exports = function UserController() {
     
             });
 
-            
-        }
+          },
 
+
+          getUserTimestamps: function( username, callback) {
+            console.log("getUserTimestamps called");
+
+            this.getUserByUsername( username, function( err, result_user) {
+                if(err || !result_user) {
+                    console.log("user not found!"); 
+                    callback(err);
+                }
+                else {
+                    TimeController.getTimestampsByUsername(username, function( err, result_timestamp) {
+                        if(err) callback(err);
+                        else {
+                            console.log('getTimestampsByUsername returned succesfully')
+
+                            var ret_obj = new Array();
+                            ret_obj[0] = result_user;
+                            ret_obj[1] = result_timestamp;
+                            callback( null, ret_obj);
+                        }
+
+                    });
+                }
+
+            });
+        }
     };
 };
 

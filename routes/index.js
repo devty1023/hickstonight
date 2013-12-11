@@ -10,6 +10,14 @@ exports.index = function( io ) {
   return function(req, res){
     console.log('index called');
     if ( req.method == 'GET' ) {
+        if ( ( (new Date()).getDay() == 2 ) && process.env.UPDATE ) {
+            console.log("update database initialized");
+            process.env.UPDATE = false;
+        }
+        else if ( ( (new Date()).getDay() != 2 ) ) {
+            process.env.UPDATE = true;
+        }
+
         userController.getUsers( function(err, results) {
             //console.log(results)
             if ( req.session.user ) {
@@ -76,7 +84,7 @@ exports.index = function( io ) {
                     }
 
                     var user = { username: result[0].username, active_since: result[0].active_since }
-                    console.log( "retrived user info: " + user );
+                    //console.log( "retrived user info: " + user );
 
                     // this body is used when we are forcing a checkout (< 30 min )
                     if ( req.body.forcedCheckout ) {
@@ -114,7 +122,7 @@ exports.index = function( io ) {
                         }
                         // update activity
                         req.session.active = result[0].active;
-                        console.log("!!!!!!!!!!! " + req.session.active);
+                        //console.log("!!!!!!!!!!! " + req.session.active);
                         // redirect
                         io.sockets.emit( 'checkedOut', { nickname: result[0].nickname } );
                         return res.redirect('/');
@@ -158,6 +166,40 @@ exports.index = function( io ) {
     }
   }
 };
+
+exports.rankings = function(req, res) {
+    userController.getUsers( function(err, results_week) {
+        userController.getUsersByAll( function(err, results_all) {
+            //console.log(results)
+            if ( req.session.user ) {
+                var current_user = {
+                    active: req.session.active,
+                    username: req.session.user
+                };
+                res.render('rankings', { title: req.session.nickname, users_week: results_week, users_all: results_all,  user: current_user, forced: req.session.forcedCheckout } )
+                // IS THIS REQUIRED?
+                //req.session.forcedCheckout = null; // update
+            }
+            else {
+                res.render('rankings', { title: 'No user', users_week: results_week, users_all: results_all, login: true } )
+            }
+        });
+    });
+}
+
+exports.userpage = function(req, res) {
+    console.log("userpage requested for " + req.params.username);
+    userController.getUserTimestamps( req.params.username, function( err, result ) {
+        if(err) {
+            res.send(err + " ");
+        }
+        else {
+            //console.log(result);
+            res.render('userpage', { title: req.params.username, user: result[0][0], timestamps: result[1]});
+        }
+
+    });
+}
 
 
 exports.newUser = function(req, res){

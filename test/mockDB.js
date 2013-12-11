@@ -13,9 +13,9 @@ var user1 = new User( {
     password: 'passwd',
     active: false,
     active_since: -1,
-    total: 0,
-    timestamps_week: [],
-    timestamps_all: [],
+    total_all: 1001,
+    total_week: 1000,
+    timestamps: [],
     created: new Date()
 });
 
@@ -25,9 +25,9 @@ var user2 = new User( {
     password: 'psswd',
     active: false,
     active_since: -1,
-    total: 0,
-    timestamps_week: [],
-    timestamps_all: [],
+    total_all: 0,
+    total_week: 0,
+    timestamps: [],
 
     created: new Date()
 });
@@ -38,9 +38,9 @@ var user3 = new User( {
     password: 'psswd1',
     active: false,
     active_since: -1,
-    total: 0,
-    timestamps_week: [],
-    timestamps_all: [],
+    total_week: 0,
+    total_all: 2000,
+    timestamps: [],
 
     created: new Date()
 });
