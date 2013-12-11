@@ -4,22 +4,44 @@
  */
 
 var userController = require('../controller/UserController')();
+var updateController = require('../controller/UpdateController')();
 
 exports.index = function( io ) {
   var io = io;
   return function(req, res){
     console.log('index called');
-    console.log('today is' + (new Date().getDay()));
-
     if ( req.method == 'GET' ) {
+
+        // UPDATE MODULE!
+        // run weeklyUpdate on Mondays
+        // run prepareUpdate on Sundays // not efficient but :(..
         var today = new Date();
-        if ( (today.getDay()==3) && (process.env.UPDATE=='true') ) {
-            console.log("update database initialized");
-            process.env.UPDATE = false;
+        if ( today.getDay()==3 ) {
+            res.render("loading");
+            updateController.weeklyUpdate( function(err, result) {
+                if (err) {
+                    console.log(err);
+                }
+                else {
+                    console.log("updae success!");
+                    return io.sockets.emit( 'updated', {} );
+                }
+            });
         }
-        else if ( ( (new Date()).getDay() != 3 ) ) {
-            process.env.UPDATE = true;
+
+        else if (today.getDay(0)==6) {
+            // update update file..
+            updateController.prepareUpdate( function( err, result ) {
+                if (err) {
+                    console.log(err);
+                }
+                else {
+                    console.log("prepare success!");
+                }
+            });
         }
+
+        console.log("update module done..");
 
         userController.getUsers( function(err, results) {
             //console.log(results)

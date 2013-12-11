@@ -199,6 +199,16 @@ module.exports = function UserController() {
                 }
 
             });
+        },
+
+        initWeek: function(callback) {
+            User.update({}, { total_week: 0 },  {multi: true}, function( err, num, raw ) {
+                if (err ){
+                    callback( new Error("update failed") );
+                }
+                else
+                    console.log(num + " " + raw );
+            });
         }
     };
 };

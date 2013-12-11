@@ -49,3 +49,7 @@ socket.on('checkedOut', function (data) {
     user_times[data.nickname] = null;
 
 });
+
+socket.on('updated', function (data) {
+    window.location = "/";
+});

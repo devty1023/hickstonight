@@ -44,12 +44,12 @@ app.get('/user/:username', routes.userpage);
 app.get('/admin/newuser', routes.newUser);
 app.post('/admin/newuser', routes.newUser);
 
+// update page
+app.get('/update', routes.update);
+
 app.listen( process.env.PORT || 3000, function(){
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });
-
-// weekly update module
-process.env.UPDATE = true;
 
 // web socket!
 io.sockets.on( 'connection', function(socket) {
