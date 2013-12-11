@@ -10,10 +10,10 @@ exports.index = function( io ) {
   return function(req, res){
     console.log('index called');
     console.log('today is' + (new Date().getDay()));
-    console.log('update?' + process.env.UPDATE);
 
     if ( req.method == 'GET' ) {
-        if ( ( (new Date()).getDay() == 3 ) && process.env.UPDATE ) {
+        var today = new Date();
+        if ( (today.getDay()==3) && (process.env.UPDATE=='true') ) {
             console.log("update database initialized");
             process.env.UPDATE = false;
         }
