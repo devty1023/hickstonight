@@ -1,4 +1,4 @@
-#! /usr/local/bin/node
+#! /app/vendor/node/bin/node
 
 var userController = require('../controller/UserController')();
 
