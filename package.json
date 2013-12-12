@@ -9,5 +9,6 @@
     , "mongodb": "*"
     , "mongoose": "*"
     , "socket.io": "*"
+    , "bcrypt": "*"
   }
 }

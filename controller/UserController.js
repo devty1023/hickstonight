@@ -1,6 +1,7 @@
 var mongoose = require('mongoose'),
     User = require('./UserScheme'),
     TimeController = require('./TimeController')();
+    bcrypt = require('bcrypt');
 
 mongoose.connect( process.env.MONGOLAB_URI || 'mongodb://localhost/hickstonight');
 
@@ -14,20 +15,24 @@ module.exports = function UserController() {
         addUser: function( usr, callback ) {
             console.log( 'UserController.addUser called' );
 
-            var user = new User( {
-                username: usr.username,
-                nickname: usr.nickname,
-                password: usr.password,
-                active:   false,
-                active_since: -1,
-                total_week: 0,
-                total_all: 0,
-                timestamps: [],
-                created: new Date()
+            bcrypt.hash( usr.password, 8, function( err, hash ) {
+                var user = new User( {
+                    username: usr.username,
+                    nickname: usr.nickname,
+                    password: hash,
+                    active:   false,
+                    active_since: -1,
+                    total_week: 0,
+                    total_all: 0,
+                    timestamps: [],
+                    created: new Date()
+                });
+
+                user.save( callback );
+ 
             });
 
-            user.save( callback );
-        },
+       },
 
         getUsers: function( callback ){
             // same as getUsersByWeek
@@ -79,15 +84,21 @@ module.exports = function UserController() {
                     if(err) callback( err );
                     // hash function
                     console.log('we found the user');
-                    if (pass == user[0].password) {
-                        console.log('with a correct password!');
-                        // authentication success
-                        callback( null, user );
-                    }
-                    else {
-                        console.log('but incorrect password!');
-                        callback( new Error("wrong passwrod!")  );
-                    }
+                    bcrypt.compare( pass, user[0].password, function( err2, res) {
+                        if( err2 ) {
+                            callback(err2);
+                        }
+                        else {
+                            if( res ) {
+                                console.log('with a correct password!');
+                                callback( null, user );
+                            }
+                            else {
+                                console.log('but incorrect password!');
+                                callback( new Error("wrong passwrod!")  );
+                            }
+                        }
+                    });
                 }
                 else {
                     callback(err);
@@ -150,7 +161,7 @@ module.exports = function UserController() {
 
             // TODO: current session must be > 30 min
             // DEVELOPMENT: 1min 
-            if ( elapsedTime < 30 ) { // less than 30 minutes 
+            if ( elapsedTime < 1800 ) { // less than 30 minutes 
                 return callback( new Error("code:00") );
             }
 
