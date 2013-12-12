@@ -10,7 +10,7 @@ userController.getUsers( function( err, result ) { if(err) console.log('error!')
 //userController.getUserByUsername( 'devty1023@gmail.com', function( err, result) { if (err) console.log(err); else console.log(result); } ) ;
 //userController.getUserByUsername( 'devty102@gmail.com', function( err, result) { if ( err | !result.length ) console.log('user not fonud'); else console.log(result); } ) ;
 
-userController.authenticate( 'devty102@gmail.com', '1234',  function( err, result) { if ( err ) console.log('auth failed'); else console.log(result); } ) ;
+userController.initWeek( function( err, result) { if ( err ) console.log('init failed'); else console.log(result); } ) ;
 
 
 

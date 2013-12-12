@@ -4,7 +4,6 @@
  */
 
 var userController = require('../controller/UserController')();
-var updateController = require('../controller/UpdateController')();
 
 exports.index = function( io ) {
   var io = io;

@@ -202,12 +202,16 @@ module.exports = function UserController() {
         },
 
         initWeek: function(callback) {
+            console.log("initWeek called");
             User.update({}, { total_week: 0 },  {multi: true}, function( err, num, raw ) {
-                if (err ){
-                    callback( new Error("update failed") );
+                if ( err ){
+                    console.log('mongo update failed.. returning..');
+                    return callback( new Error("update failed") );
                 }
-                else
-                    console.log(num + " " + raw );
+                else {
+                    console.log('monogo update succes..');
+                    return callback( null );
+                }
             });
         }
     };

@@ -1,8 +1,18 @@
-#! /app/vendor/node/bin/node
+#! /usr/local/bin/node
+
+var userController = require('../controller/UserController')();
 
 function weeklyUpdate() {
     console.log("weekly update!");
+    userController.initWeek( function( err ) {
+        if (err) {
+            console.log( err );
+        }
+        else {
+            console.log( 'weekly update succcess' );
+        }
+        process.exit();
+    });
 }
 
 weeklyUpdate();
-process.exit();
