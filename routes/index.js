@@ -39,7 +39,7 @@ exports.index = function( io ) {
 
                         req.session.checkout = true;
                         req.session.checkin = false;
-                        return res.send("something went wrong.. " + err);
+                        return res.render("error",  {error: err});
                     }
 
                     // update activity
@@ -72,7 +72,7 @@ exports.index = function( io ) {
                         // we couldn't check out..
                         req.session.checkout=false;
                         req.session.checkin=true;
-                        return res.send("getUserByUsername failed... " + err);
+                        return res.render("error", { error: err});
                     }
 
                     var user = { username: result[0].username, active_since: result[0].active_since }
@@ -86,7 +86,7 @@ exports.index = function( io ) {
                                 // we couldn't check out..
                                 req.session.checkout=false;
                                 req.session.checkin=true;
-                                return res.send("something went wrong... " + err);
+                                return res.render("error", {error: err});
                             }
 
                             // update activity
@@ -110,7 +110,7 @@ exports.index = function( io ) {
                                 req.session.forcedCheckout = true;
                                 return res.redirect("/");
                             }
-                            return res.send("something went wrong... " + err);
+                            return res.render("error", {error: err});
                         }
                         // update activity
                         req.session.active = result[0].active;
@@ -143,7 +143,7 @@ exports.index = function( io ) {
         userController.authenticate( req.body.user, req.body.pass, function (err, result) {
             console.log( "authenticating...");
             if(err) {
-                res.send("authentication failed" + err);
+                return res.render("error",  {error: err});
             }
             else {
                 console.log("in routes..");
@@ -183,7 +183,7 @@ exports.userpage = function(req, res) {
     console.log("userpage requested for " + req.params.username);
     userController.getUserTimestamps( req.params.username, function( err, result ) {
         if(err) {
-            res.send(err + " ");
+            res.render("error", {error:err});
         }
         else {
             //console.log(result);
@@ -200,8 +200,10 @@ exports.newUser = function(req, res){
 
     else {
         // verify auth code
-        if ( req.body.admin != 'devty1023' )
-            res.send( 'you are not admin! (gasp) ' );
+        if ( req.body.admin != 'devty1023' ) {
+            var err = new Error("invalide admin auth code ");
+            return res.render( "error", {error: err} );
+        }
         else {
             // construct post data
             var post_obj = {
@@ -213,19 +215,25 @@ exports.newUser = function(req, res){
             // RUN VALIDATIONS
 
             // 1. Cannot be empty
-            if ( post_obj.username == "" || post_obj.nickname == "" || post_obj.password == "" )
-                res.send( ' bad input ');
+            if ( post_obj.username == "" || post_obj.nickname == "" || post_obj.password == "" ) {
+                err = new Error("input cannot be empty");
+                return res.render('error', {error: err});
+            }
 
             // 2. username and nickname must contain only characters and numbers
             var regularExpression = /^[a-zA-Z0-9]+$/;
-            if ( !regularExpression.test(post_obj.username) || !regularExpression.test(post_obj.nickname) || !regularExpression.test(post_obj.password) )
-                res.send('username, nickname, and password must consist of alphanumeric characters only (no spaces, tabs, !@#$%)');
+            if ( !regularExpression.test(post_obj.username) || !regularExpression.test(post_obj.nickname) || !regularExpression.test(post_obj.password) )  {
+                err = new Error("username, password, and nickname cannot include special characters (i.e. space)");
+                return res.render('error', {error: err});
+            }
 
             else {
                 // add to database
                 userController.addUser( post_obj, function ( err ) {
-                    if (err) res.send(err);
-                    res.send('complete');    
+                    if (err)
+                        return res.render('error', {error: err});
+                    err = new Error("registration complete");
+                    return res.render('error', {error: err});
                 });
             }
 
