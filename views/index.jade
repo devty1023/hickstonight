@@ -29,7 +29,7 @@ div(class="col-md-4 col-md-offset-4")
   div#inactive
     each item in users
       if ( item.active_since == -1 )
-        a(href="/user/#{item.username}", id="item.nickname")
+        a(href="/user/#{item.username}", id=item.nickname)
           div(class="inactive_timer", id=item.nickname) 
             div(class="panel-body", id="inactive")
               span(class="glyphicon glyphicon-user")
