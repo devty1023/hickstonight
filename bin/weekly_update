@@ -4,15 +4,23 @@ var userController = require('../controller/UserController')();
 
 function weeklyUpdate() {
     console.log("weekly update!");
-    userController.initWeek( function( err ) {
-        if (err) {
-            console.log( err );
-        }
-        else {
-            console.log( 'weekly update succcess' );
-        }
+    var today = new Date();
+    if( today.getDay() == 1 ) {
+        console.log("today is monday");
+        userController.initWeek( function( err ) {
+            if (err) {
+                console.log( err );
+            }
+            else {
+                console.log( 'weekly update succcess' );
+            }
+            process.exit();
+        });
+    }
+    else {
+        console.log("today is not monday");
         process.exit();
-    });
+    }
 }
 
 weeklyUpdate();
