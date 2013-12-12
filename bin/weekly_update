@@ -5,4 +5,4 @@ function weeklyUpdate() {
 }
 
 weeklyUpdate();
-exit();
+process.exit();
