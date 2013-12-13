@@ -12,11 +12,11 @@ div(class="col-md-4 col-md-offset-4")
         button(class="btn btn-info btn-block", disabled="disabled")
           strong Total Time Spent 
           br
-          = Math.floor(user.total_all/3600) + " hr " + Math.floor(user.total_all/60) + " min"
+          = Math.floor(user.total_all/3600) + " hr " + Math.floor((user.total_all/60)%60) + " min"
         button(class="btn btn-info btn-block", disabled="disabled")
           strong This week 
           br
-          = Math.floor(user.total_week/3600) + " hr " + Math.floor(user.total_week/60) + " min"
+          = Math.floor(user.total_week/3600) + " hr " + Math.floor( (user.total_week/60)%60) + " min"
 
 div(class="col-md-4 col-md-offset-4")
   div#timestamps
@@ -33,8 +33,8 @@ div(class="col-md-4 col-md-offset-4")
 
           div(class="timestamp time")
             if( (timestamp.elapsedTime / 3600) > 1 )
-              = Math.floor(timestamp.elasedTime/3600) + " hr"
+              = Math.floor(timestamp.elapsedTime/3600) + " hr"
 
-            = Math.floor(timestamp.elapsedTime / 60) + " min"
+            = Math.floor((timestamp.elapsedTime / 60)%60) + " min"
 
 

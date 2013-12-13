@@ -45,7 +45,7 @@ exports.index = function( io ) {
                     // update activity
                     req.session.active = result[0].active;
                     // redirect
-                    io.sockets.emit( 'checkedIn', { nickname: result[0].nickname, active_since: result[0].active_since } );
+                    io.sockets.emit( 'checkedIn', { username: result[0].username, nickname: result[0].nickname, active_since: result[0].active_since } );
                     return res.redirect('/');
 
                 });
@@ -93,7 +93,7 @@ exports.index = function( io ) {
                             req.session.active = result[0].active;
 
                             // send socket messages
-                            io.sockets.emit( 'checkedOut', { nickname: result[0].nickname } );
+                            io.sockets.emit( 'checkedOut', { username: result[0].username,  nickname: result[0].nickname } );
 
                             return res.redirect('/');
                         });
@@ -116,7 +116,7 @@ exports.index = function( io ) {
                         req.session.active = result[0].active;
                         //console.log("!!!!!!!!!!! " + req.session.active);
                         // redirect
-                        io.sockets.emit( 'checkedOut', { nickname: result[0].nickname } );
+                        io.sockets.emit( 'checkedOut', { usrname: result[0].username,  nickname: result[0].nickname } );
                         return res.redirect('/');
                     });
 

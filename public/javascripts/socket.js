@@ -8,11 +8,12 @@ socket.on('checkedIn', function (data) {
     $( "#active" ).children( "#"+data.nickname ).remove();
 
     // create a new span
-    var new_div = '<div class="active_timer" id="' + data.nickname +'">';
-    new_div += '<div class="panel-body", id="active">'
-    new_div += '<span class="glyphicon glyphicon-user"></span> ' + data.nickname;
+    var new_div = '<a href="/user/' + data.username + '" id="' + data.nickname + '">';
+    new_div += '<div class="active_timer" id="' + data.nickname +'">';
+    new_div += '<div class="panel-body", id="active">';
+    new_div += '<span class="glyphicon glyphicon-user"> ' + data.nickname + '</span>';
     new_div += '<div class="active_timer time" id="' + data.nickname + '">' + "0";
-        new_div += '</div></div></div>';
+    new_div += '</div></div></div></a>';
 
     // insert to new 
     $( '#active' ).append( new_div );
@@ -36,11 +37,13 @@ socket.on('checkedOut', function (data) {
     // simply remove the existing node..
     $( "#inactive" ).children( "#"+data.nickname ).remove();
 
-    var new_div = '<div class="inactive_timer" id="' + data.nickname +'">';
-    new_div += '<div class="panel-body", id="inactive">'
-    new_div += '<span class="glyphicon glyphicon-user"></span> ' + data.nickname;
+
+    var new_div = '<a href="/user/' + data.username + '" id="' + data.nickname + '">';
+    new_div += '<div class="inactive_timer" id="' + data.nickname +'">';
+    new_div += '<div class="panel-body", id="inactive">';
+    new_div += '<span class="glyphicon glyphicon-user"> ' + data.nickname + '</span>';
     new_div += '<div class="inactive_timer time" id="' + data.nickname + '"> offline';
-        new_div += '</div></div></div>';
+        new_div += '</div></div></div></a>';
 
     // insert to new 
     $( '#inactive' ).append( new_div );
