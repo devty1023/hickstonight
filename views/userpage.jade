@@ -1,3 +1,6 @@
+script(src="/javascripts/bootstrap-formhelpers.min.js")
+link(rel='stylesheet', href='/stylesheets/bootstrap-formhelpers.min.css')
+
 div(class="col-md-4 col-md-offset-4")
   h1 
     a(href="/") Hicks Tonight
@@ -25,16 +28,29 @@ div(class="col-md-4 col-md-offset-4")
         div(class="panel-body", id="timestamp")
           div(class="timestamp day")
             = timestamp.created.toDateString()
+            if edit_en
+              button(class="btn-delete close", id=timestamp._id, aria-hidden="true")
+                span(class="glyphicon glyphicon-remove") 
+
+              form(action="", method="post", class="pull-right")
+                input(type="hidden", name="id", value=timestamp._id)
+                button(type="submit", class="btn-delete-delete close", id="delete"+timestamp._id, aria-hidden="true", name="remove", value="true")
+                  span(class="glyphicon glyphicon-trash") 
+
 
           div(class="timestamp inout")
+            span(id="startTime")
+              = ( new Date(timestamp.startTime*1000).toLocaleTimeString())
+            span(id="endTime"+timestamp._id)
+              = " - " + ( new Date(timestamp.endTime*1000).toLocaleTimeString())
 
-            = ( new Date(timestamp.startTime*1000).toLocaleTimeString())
-            = " - " + ( new Date(timestamp.endTime*1000).toLocaleTimeString())
 
           div(class="timestamp time")
             if( (timestamp.elapsedTime / 3600) > 1 )
-              = Math.floor(timestamp.elapsedTime/3600) + " hr"
+              = Math.floor(timestamp.elapsedTime/3600) + " hr "
 
             = Math.floor((timestamp.elapsedTime / 60)%60) + " min"
 
+script(src="/javascripts/userpage.js")
 
+          

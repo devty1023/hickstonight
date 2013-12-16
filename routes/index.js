@@ -180,17 +180,44 @@ exports.rankings = function(req, res) {
 }
 
 exports.userpage = function(req, res) {
-    console.log("userpage requested for " + req.params.username);
-    userController.getUserTimestamps( req.params.username, function( err, result ) {
-        if(err) {
-            res.render("error", {error:err});
-        }
-        else {
-            //console.log(result);
-            res.render('userpage', { title: req.params.username, user: result[0][0], timestamps: result[1]});
+    if( req.method == 'GET' ) {
+        console.log("userpage requested for " + req.params.username);
+        userController.getUserTimestamps( req.params.username, function( err, result ) {
+            if(err) {
+                res.render("error", {error:err});
+            }
+            else {
+                //console.log(result);
+                var edit_en = ( req.params.username == req.session.user )?true:false;
+                console.log( "user accessing his userpage?" );
+                console.log( edit_en );
+                res.render('userpage', { title: req.params.username, user: result[0][0], timestamps: result[1], edit_en: edit_en});
+            }
+
+        });
+    }
+    else if ( req.method == 'POST' ) {
+        console.log(req.body);
+        //`res.send( req.body.id + " " + req.body.remove + " " + req.body.edit );
+
+        // remove this time stamp
+        if( req.body.remove ) {
+            userController.removeUserTimestamp(req.session.user, req.body.id, function( err, result ) {
+                if( err ) {
+                    return res.render('error', { err: err } );
+                }
+                else  {
+                    console.log("DONE!!");
+                    //return res.redirect('/user/' + req.session.user);
+                }
+
+            });
         }
 
-    });
+
+        return res.redirect('/user/' + req.session.user);
+
+    }
 }
 
 

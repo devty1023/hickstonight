@@ -45,6 +45,27 @@ module.exports = function TimeController() {
                     callback(null, result);
             });
 
+        },
+
+        removeTimestamp: function( id, callback ) {
+            console.log( "remove Timestamp called");
+            Timestamp.find( { _id: mongoose.Types.ObjectId(id) }, function( err, result ) {
+                if ( err || !result.length ) {
+                    callback( new Error("timestamp not found"));
+                }
+                else {
+                    console.log("removeTimestamp.find success: ");
+                    console.log(result);
+                    var timeStamp =  {
+                        elapsedTime: result[0].elapsedTime,
+                        endTime: result[0].endTime
+                    };
+                    console.log("removeTimeStamp returning..");
+                    console.log(timeStamp);
+                    result[0].remove();
+                    callback( null, timeStamp );
+                }
+            });
         }
     };
 };

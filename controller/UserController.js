@@ -161,7 +161,7 @@ module.exports = function UserController() {
 
             // TODO: current session must be > 30 min
             // DEVELOPMENT: 1min 
-            if ( elapsedTime < 1800 ) { // less than 30 minutes 
+            if ( elapsedTime < 1800 ) { // less "than 30 minutes 
                 return callback( new Error("code:00") );
             }
 
@@ -224,6 +224,53 @@ module.exports = function UserController() {
                     return callback( null );
                 }
             });
+        },
+
+        removeUserTimestamp: function(username, timestamp_id, callback ) { 
+            // 1. find user stamp and get elapsed time
+            var elapsedTime;
+            User.findOne( { username: username }, function( err, user_result ) {
+                if( err || !user_result ) {
+                    callback( new Error("user " + username + " not found"));
+                }
+
+                
+                else {
+                    console.log("USER!");
+                    console.log(user_result);
+                    // 2. remove timestamp
+                    TimeController.removeTimestamp( timestamp_id, function( err, time_result ) {
+                        if( err ) {
+                            callback( err );
+                        }
+                        else {
+                            // 3. update user total_all or total_week
+                            elapsedTime = time_result.elapsedTime;
+                            console.log("elapsedTIme: " + elapsedTime);
+
+
+                            // get this monday's date
+                            var this_monday = new Date();
+                            this_monday.setDate(this_monday.getDate() - (this_monday.getDay() + 6) % 7);
+                            this_monday.setHours(0,0,0,0);
+                            this_monday = Math.floor(this_monday.getTime()/1000);
+
+                            if( time_result.endTime > this_monday ) {
+                                // this weeks time
+                                console.log("updating total_week");
+                                User.update( {username: user_result.username}, { total_week: (user_result.total_week - elapsedTime), $pull: { timestamps: timestamp_id }  }, callback );
+                            }
+
+                            else {
+                                console.log("updating total_all");
+                                User.update( {username: user_result.username}, { total_all: (user_result.total_all - elapsedTime) }, callback );
+                            }
+                        }
+                    });
+                }
+
+            });
+
         }
     };
 };
